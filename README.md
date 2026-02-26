@@ -126,17 +126,6 @@ uv run python src/main.py --batch
 uv run python src/main.py --batch --output results.txt  # save to file
 ```
 
-### Web UI (Gradio)
-
-```bash
-uv run python app.py
-# Opens at http://localhost:7860
-```
-
-```bash
-uv run python app.py --share  # creates a public link
-```
-
 ---
 
 ## Test Questions & Expected Behaviour
