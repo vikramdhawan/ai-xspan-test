@@ -4,7 +4,7 @@ An agentic RAG system that answers complex, multi-hop questions about
 "Attention Is All You Need" (Vaswani et al., 2017) using a
 **plan → retrieve → reason → reflect → iterate** loop with citation grounding.
 
-**Stack:** LangGraph · OpenAI · ChromaDB · BM25 · sentence-transformers · Gradio · UV
+**Stack:** LangGraph · OpenAI · ChromaDB · BM25 · sentence-transformers · UV
 
 ---
 
@@ -46,35 +46,47 @@ Sub-query
 
 ---
 
-## Setup (3 commands)
-
-### Prerequisites
-- Python 3.11+
-- UV (`curl -LsSf https://astral.sh/uv/install.sh | sh`)
-- OpenAI API key
-
-### 1. Install dependencies
+## Quick Start (Docker — single command)
 
 ```bash
-uv sync
+cp .env.example .env   # then set your OPENAI_API_KEY
+# Place the PDF in data/papers/ before first run (volume mount)
+docker compose up --build
 ```
 
-### 2. Configure environment
+**Note:** Confirm the paper PDF is in `data/papers/` before first run — the `./data` volume is mounted into the container, and ingestion needs the PDF there.
+
+This builds the container, installs all dependencies, ingests the paper, and
+drops you into an interactive Q&A session. Data is persisted in `data/` via
+a volume mount — subsequent runs skip ingestion.
+
+If interactive mode has TTY/stdin issues, run a single question or batch mode instead (pass arguments directly — the entrypoint invokes the CLI):
 
 ```bash
-cp .env.example .env
-# Open .env and set your OPENAI_API_KEY
+# Single question
+docker compose run --rm rag --question "What is multi-head attention?"
+
+# Batch mode (all 7 test questions)
+docker compose run --rm rag --batch
+docker compose run --rm rag --batch --output results.txt
 ```
 
-### 3. Ingest the paper
+First run downloads the reranker model (~90MB); expect ~60–70 seconds for a single question.
 
-Place the PDF in `data/papers/`, then:
+### Quick Start (Local — without Docker)
+
+Prerequisites: Python 3.12+, [UV](https://docs.astral.sh/uv/)
 
 ```bash
-uv run python scripts/ingest_papers.py
+cp .env.example .env              # set your OPENAI_API_KEY
+uv sync                           # install dependencies
+uv run python scripts/ingest_papers.py  # ingest the paper (~10s)
+uv run python src/main.py         # interactive mode
 ```
 
-This will:
+### Ingestion details
+
+The ingestion step (`scripts/ingest_papers.py`) will:
 - Parse the PDF (43 chunks with section/page metadata)
 - Embed using `text-embedding-3-small` (costs ~$0.001)
 - Save chunks to `data/kb/` (human-readable JSON cache)
@@ -159,7 +171,8 @@ ai-xspan-test/
 ├── .env.example            # Environment variables template
 ├── README.md               # This file
 ├── design_notes.md         # Architecture decisions (for submission)
-├── app.py                  # Gradio web UI
+├── Dockerfile              # Container build
+├── docker-compose.yml      # Single-command setup
 │
 ├── data/
 │   ├── papers/             # PDF files go here

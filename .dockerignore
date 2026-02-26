@@ -1,0 +1,12 @@
+.venv/
+.git/
+.claude/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+chroma.log
+*.egg-info/
+build/
+dist/
+~$*

@@ -1,0 +1,12 @@
+services:
+  rag:
+    build: .
+    stdin_open: true
+    tty: true
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    volumes:
+      # Persist indexes across container restarts
+      - ./data:/app/data

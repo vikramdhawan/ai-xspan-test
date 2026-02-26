@@ -204,7 +204,7 @@ rather than producing plausible-sounding but fabricated content.
 | Reranker | sentence-transformers cross-encoder | Local, no API cost, 95% of BERT quality at 3x speed |
 | PDF parsing | PyMuPDF (fitz) | Best-in-class for structured extraction (spans, fonts, tables) |
 | Package mgr | UV | Fast, reliable, as specified |
-| UI | Gradio 4.x | Minimal boilerplate for a functional web chat interface |
+| Container | Docker | Single-command setup via `docker compose up` |
 
 ---
 
